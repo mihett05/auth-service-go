@@ -7,6 +7,7 @@ import (
 	"github.com/mihett05/auth-service-go/core/models"
 	"github.com/mihett05/auth-service-go/libs"
 	"github.com/mihett05/auth-service-go/services"
+	"time"
 )
 
 var _authMiddleware *jwt.GinJWTMiddleware = nil
@@ -53,6 +54,12 @@ func AuthMiddleware() *jwt.GinJWTMiddleware {
 			Unauthorized: func(c *gin.Context, code int, msg string) {
 				c.JSON(code, gin.H{
 					"error": msg,
+				})
+			},
+			LoginResponse: func(c *gin.Context, code int, accessToken string, expire time.Time) {
+				c.JSON(code, gin.H{
+					"expire": expire,
+					"access_token": accessToken,
 				})
 			},
 		})
