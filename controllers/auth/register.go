@@ -28,7 +28,14 @@ func Register(c *gin.Context)  {
 
 			db.Save(user).Commit()
 
-			midlewares.AuthMiddleware().LoginHandler(c)
+			token, expire, err := midlewares.AuthMiddleware().TokenGenerator(user)
+
+			if err != nil {
+				panic(err)
+			}
+
+			midlewares.AuthMiddleware().LoginResponse(c, http.StatusOK, token, expire)
+
 		} else {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "login is already in use",
