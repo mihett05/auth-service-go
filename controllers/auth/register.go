@@ -20,8 +20,9 @@ func Register(c *gin.Context)  {
 		db := services.GetDB()
 
 		user := new(models.User)
-		if err := db.Where("username = ? OR email = ?", query.Username, query.Email).First(user).Error
-			err == gorm.ErrRecordNotFound {
+		usernameFree := db.Where("username = ?", query.Username).First(user).Error == gorm.ErrRecordNotFound
+		emailFree := db.Where("email = ?", query.Email).First(user).Error == gorm.ErrRecordNotFound
+		if usernameFree && emailFree {
 			user.Username = query.Username
 			user.Email = query.Email
 			user.Salt, user.Password = libs.GenerateHash(query.Password)
@@ -36,9 +37,13 @@ func Register(c *gin.Context)  {
 
 			midlewares.AuthMiddleware().LoginResponse(c, http.StatusOK, token, expire)
 
-		} else {
+		} else if !usernameFree {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "login is already in use",
+			})
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "email is already in use",
 			})
 		}
 	}
