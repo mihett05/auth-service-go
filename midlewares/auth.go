@@ -17,6 +17,8 @@ func AuthMiddleware() *jwt.GinJWTMiddleware {
 		authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 			Key:         []byte(libs.EnvDefault("KEY")),
 			IdentityKey: "username",
+			Timeout: time.Hour,
+			MaxRefresh: time.Hour * 24 * 30,
 			PayloadFunc: func(data interface{}) jwt.MapClaims {
 				if v, ok := data.(*models.User); ok {
 					return jwt.MapClaims{
