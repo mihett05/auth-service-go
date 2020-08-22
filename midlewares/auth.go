@@ -62,6 +62,12 @@ func AuthMiddleware() *jwt.GinJWTMiddleware {
 					"access_token": accessToken,
 				})
 			},
+			RefreshResponse: func(c *gin.Context, code int, accessToken string, expire time.Time) {
+				c.JSON(code, gin.H{
+					"expire": expire,
+					"access_token": accessToken,
+				})
+			},
 		})
 		if err != nil {
 			panic(err)

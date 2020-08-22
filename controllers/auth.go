@@ -9,4 +9,6 @@ import (
 func InitAuthRoutes(group *gin.RouterGroup)  {
 	group.POST("/login/", midlewares.AuthMiddleware().LoginHandler)
 	group.POST("/register/", auth.Register)
+	group.GET("/refresh/", midlewares.AuthMiddleware().RefreshHandler)
+	group.GET("/verify/", auth.Verify)
 }
